@@ -1,0 +1,85 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+# Libraries should not include pubspec.lock, per https://dart.dev/guides/libraries/private-files#pubspeclock.
+# /pubspec.lock
+**/doc/api/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+
+# Dart/Flutter
+.pub-cache/
+.pub/
+
+# IDE specific files
+.idea/
+.vscode/
+
+# Generated Xcode files
+*.hmap
+*.xcscheme
+xcuserdata/
+DerivedData/
+
+# macOS specific files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Log files
+*.log
+logs/
+
+# Temporary files
+*.tmp
+
+# Rider specific files
+.idea.defaultxml
+
+# Generated Native Files (especially for example apps)
+example/ios/Pods/
+example/ios/Flutter/Flutter.podspec
+example/ios/Flutter/Generated.xcconfig
+example/ios/Flutter/flutter_export_environment.sh
+example/ios/Flutter/GeneratedPluginRegistrant.*
+example/ios/Podfile.lock
+example/ios/.symlinks/
+example/ios/Runner.xcworkspace/
+
+example/android/.gradle/
+example/android/app/build/
+example/android/build/
+# example/android/gradle.properties # Might contain sensitive info or local paths
+# example/android/local.properties # Might contain sensitive info or local paths
+
+# Nugget Plugin Specific Generated Files (add more if needed)
+ios/nugget_flutter_plugin.podspec # Often auto-generated, but might be committed if manually edited
+
+# Dependencies (Ensure these are fetched via package managers)
+# If using git submodules, uncomment the following line
+# /path/to/submodule/
