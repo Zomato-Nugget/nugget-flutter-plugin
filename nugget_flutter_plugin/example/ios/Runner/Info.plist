@@ -49,12 +49,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-<<<<<<< HEAD
 	<key>UIAppFonts</key>
 	<array>
 		<string>PlaywriteHU-Thin.ttf</string>
 	</array>
-=======
->>>>>>> 4ade6faafdd328c2b0d4550e89e7971b5f141c7a
 </dict>
 </plist>

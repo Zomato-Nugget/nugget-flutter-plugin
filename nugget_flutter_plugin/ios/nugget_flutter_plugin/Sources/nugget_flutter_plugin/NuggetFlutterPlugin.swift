@@ -2,7 +2,6 @@ import Flutter
 import UIKit
 import NuggetSDK
 
-<<<<<<< HEAD
 class FontProviderImpl: NuggetFontProviderDelegate {
     var customFontMapping: (any NuggetFontPropertiesMapping)?
     
@@ -74,74 +73,6 @@ public class NuggetFlutterPlugin: NSObject, FlutterPlugin {
         }
     }
     
-=======
-// Define constants for method channel names and arguments
-// ... existing code ...
-
-// Conform to FlutterPlugin and the required NuggetSDK delegates
-public class NuggetFlutterPlugin: NSObject, FlutterPlugin, 
-                                    NuggetAuthProviderDelegate, 
-                                    NuggetThemeProviderDelegate, // Use the actual protocol name
-                                    NuggetFontProviderDelegate,  // Use the actual protocol name
-                                    NuggetTicketCreationDelegate { // <-- REMOVED Push Delegate
-    
-    // Hold the channel for sending messages back to Dart
-    let channel: FlutterMethodChannel
-    // Hold the factory instance returned by the SDK initialization
-    var nuggetFactory: NuggetFactory? // Assuming NuggetFactory is the type returned
-    // Store theme/font data if needed for delegates
-    var themeDataMap: [String: Any]?
-    var fontDataMap: [String: Any]?
-    
-    // --- ADDED: Stream Handlers ---
-    private let ticketSuccessHandler = EventStreamHandler()
-    private let ticketFailureHandler = EventStreamHandler()
-    private let tokenHandler = EventStreamHandler()          // <-- ADDED
-    private let permissionHandler = EventStreamHandler()     // <-- ADDED
-    // TODO: Add handlers for token and permission status later
-    // private let tokenHandler = BasicStreamHandler<String>()
-    // private let permissionHandler = BasicStreamHandler<Int>()
-    // --- END ADDED ---
-
-    // --- Notification Observers ---
-    private var tokenObserver: NSObjectProtocol?
-    private var permissionObserver: NSObjectProtocol?
-    // --- END Notification Observers ---
-
-    // Initializer to store the channel
-    init(channel: FlutterMethodChannel) {
-        self.channel = channel
-        super.init()
-        // Add observers when the plugin instance is created
-        addNotificationObservers()
-    }
-
-    // --- ADDED: NotificationCenter Handling ---
-    private func addNotificationObservers() {
-        // Define Notification names locally (or import if defined globally)
-        let tokenNotificationName = Notification.Name("AppDidReceivePushToken")
-        let permissionNotificationName = Notification.Name("AppPushPermissionStatusUpdated")
-
-        tokenObserver = NotificationCenter.default.addObserver(forName: tokenNotificationName, object: nil, queue: nil) { [weak self] notification in
-            print("NuggetFlutterPlugin received AppDidReceivePushToken notification")
-            if let token = notification.userInfo?["token"] as? String {
-                self?.tokenHandler.sendEvent(data: token)
-            } else {
-                print("NuggetFlutterPlugin Error: Could not extract token from notification")
-            }
-        }
-
-        permissionObserver = NotificationCenter.default.addObserver(forName: permissionNotificationName, object: nil, queue: nil) { [weak self] notification in
-            print("NuggetFlutterPlugin received AppPushPermissionStatusUpdated notification")
-            if let status = notification.userInfo?["status"] as? Int { // Assuming status is Int
-                self?.permissionHandler.sendEvent(data: status)
-            } else {
-                 print("NuggetFlutterPlugin Error: Could not extract status from notification")
-            }
-        }
-    }
-
->>>>>>> 4ade6faafdd328c2b0d4550e89e7971b5f141c7a
     private func removeNotificationObservers() {
         if let observer = tokenObserver {
             NotificationCenter.default.removeObserver(observer)
@@ -152,7 +83,6 @@ public class NuggetFlutterPlugin: NSObject, FlutterPlugin,
             permissionObserver = nil
         }
     }
-<<<<<<< HEAD
     
     deinit {
         removeNotificationObservers()
@@ -173,60 +103,20 @@ public class NuggetFlutterPlugin: NSObject, FlutterPlugin,
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
     
-=======
-
-    deinit {
-        // Ensure observers are removed when the plugin instance is deallocated
-        removeNotificationObservers()
-    }
-    // --- END NotificationCenter Handling ---
-
-    public static func register(with registrar: FlutterPluginRegistrar) {
-        let channel = FlutterMethodChannel(name: "nugget_flutter_plugin", binaryMessenger: registrar.messenger())
-        // Create instance, passing the channel
-        let instance = NuggetFlutterPlugin(channel: channel)
-        registrar.addMethodCallDelegate(instance, channel: channel)
-
-        // --- ADDED: Event Channels for Native -> Dart streams ---
-        let ticketSuccessEventChannel = FlutterEventChannel(name: "nugget_flutter_plugin/onTicketCreationSucceeded", binaryMessenger: registrar.messenger())
-        ticketSuccessEventChannel.setStreamHandler(instance.ticketSuccessHandler)
-        
-        let ticketFailureEventChannel = FlutterEventChannel(name: "nugget_flutter_plugin/onTicketCreationFailed", binaryMessenger: registrar.messenger())
-        ticketFailureEventChannel.setStreamHandler(instance.ticketFailureHandler)
-        
-        // Register token and permission channels
-        let tokenEventChannel = FlutterEventChannel(name: "nugget_flutter_plugin/onTokenUpdated", binaryMessenger: registrar.messenger())
-        tokenEventChannel.setStreamHandler(instance.tokenHandler)
-        
-        let permissionEventChannel = FlutterEventChannel(name: "nugget_flutter_plugin/onPermissionStatusUpdated", binaryMessenger: registrar.messenger())
-        permissionEventChannel.setStreamHandler(instance.permissionHandler)
-        // --- END ADDED ---
-
-        // Register the Platform View Factory
-        let viewFactory = NuggetChatViewFactory(messenger: registrar.messenger(), pluginInstance: instance)
-        registrar.register(viewFactory, withId: "com.yourcompany.nugget/chat_view") // Must match viewType in Dart
-    }
-    
-    // Handle calls FROM Dart
->>>>>>> 4ade6faafdd328c2b0d4550e89e7971b5f141c7a
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
         case "initialize":
             handleInitialize(call: call, result: result)
         case "openChatWithCustomDeeplink":
             handleOpenChatWithCustomDeeplink(call: call, result: result)
-<<<<<<< HEAD
         case "syncFCMToken":
             handleSyncFCMToken(call: call, result: result)
         case "accessTokenResponse":
             break
-=======
->>>>>>> 4ade6faafdd328c2b0d4550e89e7971b5f141c7a
         default:
             result(FlutterMethodNotImplemented)
         }
     }
-<<<<<<< HEAD
     
     private func handleInitialize(call: FlutterMethodCall, result: @escaping FlutterResult) {
         guard let nuggetAuthProvider = Self.instance?.nuggetAuthProvider else {
@@ -280,45 +170,6 @@ public class NuggetFlutterPlugin: NSObject, FlutterPlugin,
         if self.nuggetFactory != nil {
             result(nil)
         } else {
-=======
-
-    // --- Method Call Handlers --- 
-
-    private func handleInitialize(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        // Ensure args is a dictionary, but don't require apiKey
-        guard let args = call.arguments as? [String: Any] else {
-            // Return a generic invalid arguments error if casting fails
-            result(FlutterError(code: "INVALID_ARGS", message: "Invalid arguments received for initialize method", details: nil))
-            return
-        }
-        
-        // Store theme/font data if provided
-        self.themeDataMap = args["theme"] as? [String: Any]
-        self.fontDataMap = args["font"] as? [String: Any]
-        
-        print("NuggetFlutterPlugin Swift: Initializing NuggetSDK...")
-        
-        // *** TODO: Create a separate instance for NuggetPushNotificationsListener ***
-        // let notificationListener = ... // This needs to be created and managed
-        // let notificationListener = NuggetPushListener() // Create an instance <- COMMENTED OUT
-        
-        // Call the native SDK initialization
-        // IMPORTANT: Pass `self` for delegates the plugin implements
-        // *** TODO: Update the notificationDelegate argument below ***
-        self.nuggetFactory = NuggetSDK.initializeNuggetFactory(
-            authDelegate: self, 
-            notificationDelegate: NuggetPushNotificationsListener(),
-            customThemeProviderDelegate: self,
-            customFontProviderDelegate: self, 
-            ticketCreationDelegate: self 
-        )
-
-        if self.nuggetFactory != nil {
-             print("NuggetFlutterPlugin Swift: NuggetSDK Initialized Successfully.")
-            result(nil) // Indicate success to Dart
-        } else {
-             print("NuggetFlutterPlugin Swift: NuggetSDK Initialization Failed.")
->>>>>>> 4ade6faafdd328c2b0d4550e89e7971b5f141c7a
             result(FlutterError(code: "INIT_FAILED", message: "Native NuggetSDK initialization returned nil", details: nil))
         }
     }

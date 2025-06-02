@@ -1,15 +1,9 @@
-<<<<<<< HEAD
 name: flutter_nugget_impl
 description: "A new Flutter project."
-=======
-name: nugget_flutter_plugin_example
-description: "Demonstrates how to use the nugget_flutter_plugin plugin."
->>>>>>> 4ade6faafdd328c2b0d4550e89e7971b5f141c7a
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-<<<<<<< HEAD
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
 # followed by an optional build number separated by a +.
@@ -26,10 +20,6 @@ version: 1.0.0+1
 
 environment:
   sdk: '>=3.3.4 <4.0.0'
-=======
-environment:
-  sdk: ^3.7.2
->>>>>>> 4ade6faafdd328c2b0d4550e89e7971b5f141c7a
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -40,30 +30,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-<<<<<<< HEAD
   nugget_flutter_plugin:
     path: ../
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
-=======
-
-  nugget_flutter_plugin:
-    # When depending on this package from a real application you should use:
-    #   nugget_flutter_plugin: ^x.y.z
-    # See https://dart.dev/tools/pub/dependencies#version-constraints
-    # The example app is bundled with the plugin so we use a path dependency on
-    # the parent directory to use the current plugin's version.
-    path: ../
-
-  # Add shared_preferences
-  shared_preferences: ^2.2.3 # Use latest version
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
->>>>>>> 4ade6faafdd328c2b0d4550e89e7971b5f141c7a
 
 dev_dependencies:
   flutter_test:
@@ -74,11 +46,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-<<<<<<< HEAD
   flutter_lints: ^3.0.0
-=======
-  flutter_lints: ^5.0.0
->>>>>>> 4ade6faafdd328c2b0d4550e89e7971b5f141c7a
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -91,7 +59,6 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-<<<<<<< HEAD
   fonts:
     - family: PlaywriteHU
       fonts:
@@ -101,25 +68,16 @@ flutter:
       fonts:
         - asset: assets/fonts/nunito_sans.ttf
           weight: 100
-=======
->>>>>>> 4ade6faafdd328c2b0d4550e89e7971b5f141c7a
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
-<<<<<<< HEAD
   # https://flutter.dev/assets-and-images/#resolution-aware
 
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
-=======
-  # https://flutter.dev/to/resolution-aware-images
-
-  # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/to/asset-from-package
->>>>>>> 4ade6faafdd328c2b0d4550e89e7971b5f141c7a
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
@@ -139,8 +97,4 @@ flutter:
   #         weight: 700
   #
   # For details regarding fonts from package dependencies,
-<<<<<<< HEAD
   # see https://flutter.dev/custom-fonts/#from-packages
-=======
-  # see https://flutter.dev/to/font-from-package
->>>>>>> 4ade6faafdd328c2b0d4550e89e7971b5f141c7a

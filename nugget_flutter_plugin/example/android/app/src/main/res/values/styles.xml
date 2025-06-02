@@ -15,7 +15,6 @@
     <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
         <item name="android:windowBackground">?android:colorBackground</item>
     </style>
-<<<<<<< HEAD
 
 <!--    // Sample for adding font style for Android-->
 <!--    <style name="SFProTextRegular">-->
@@ -23,6 +22,4 @@
 <!--        <item name="fontFamily">@font/"your_app_font"</item>-->
 <!--    </style>-->
 
-=======
->>>>>>> 4ade6faafdd328c2b0d4550e89e7971b5f141c7a
 </resources>
