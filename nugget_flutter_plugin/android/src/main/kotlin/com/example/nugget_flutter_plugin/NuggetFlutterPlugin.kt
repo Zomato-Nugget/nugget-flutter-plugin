@@ -28,6 +28,13 @@ import java.util.UUID
 import com.zomato.chatsdk.utils.ChatFCMTokenManager
 import com.zomato.chatsdk.chatcorekit.init.ChatSdkNotificationsData
 import com.example.nugget_flutter_plugin.R
+import kotlin.coroutines.suspendCoroutine
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.resume
+import java.util.concurrent.ConcurrentHashMap
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.TimeoutCancellationException
 
 /**
  * Created by Kunal Chhabra on 18 May 2025
@@ -42,8 +49,7 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
     private var activity: Activity? = null
     private var fontMapping : Map<String , String> = mutableMapOf()
 
-    private val pendingRequests = mutableMapOf<String, CompletableFuture<Map<String, Any?>>>()
-    private var currentFuture : CompletableFuture<Map<String, Any?>>? = null
+    private val pendingRequests = ConcurrentHashMap<String, Continuation<ChatSdkAccessTokenData>>()
 
     companion object {
         const val CHANNEL_NAME = "nugget_flutter_plugin"
@@ -53,7 +59,7 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
         const val METHOD_SYNC_FCM_TOKEN = "syncFCMToken"
         const val METHOD_FETCH_ACCESS_TOKEN_FROM_CLIENT = "fetchAccessTokenFromClient"
 
-        const val TIMEOUT_DURATION = 15L // seconds
+        const val TIMEOUT_DURATION = 15000L // milliseconds
     }
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
@@ -91,7 +97,7 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
                     ChatSdk.initialize(
                         application,
                         initInterface = object : ChatSDKInitCommunicator {
-                            override fun getAccessTokenData(): ChatSdkAccessTokenData {
+                            override suspend fun getAccessTokenData(): ChatSdkAccessTokenData {
                                 return getAccessTokenDataFromClient()
                             }
 
@@ -104,7 +110,7 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
                                 )
                             }
 
-                            override fun getRefreshToken(): String {
+                            override suspend fun getRefreshToken(): String {
                                 return getAccessTokenDataFromClient().accessToken ?: ""
                             }
 
@@ -146,12 +152,12 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
                 val statusCode = call.argument<Int>("httpCode") ?: -1
                 val requestId = call.argument<String>("requestId")
 
-                currentFuture?.complete(mapOf(
-                    "token" to token,
-                    "httpCode" to statusCode
-                ))
+                val continuation = pendingRequests.remove(requestId)
 
-                pendingRequests.remove(requestId)
+                if (continuation != null) {
+                    continuation.resume(ChatSdkAccessTokenData(token, statusCode))
+                }
+
                 result.success(true)
             }
 
@@ -201,29 +207,36 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
         }
     }
 
-    private fun getAccessTokenDataFromClient() : ChatSdkAccessTokenData {
-        val future = CompletableFuture<Map<String, Any?>>()
-        currentFuture = future
+    private suspend fun getAccessTokenDataFromClient(): ChatSdkAccessTokenData {
+        return try {
+            withTimeout(TIMEOUT_DURATION) {
+                suspendCancellableCoroutine { continuation ->
 
-        val requestId = UUID.randomUUID().toString()
-        pendingRequests[requestId] = future
+                    val requestId = UUID.randomUUID().toString()
 
-        // Request the data via channel
-        Handler(Looper.getMainLooper()).post {
-            channel.invokeMethod(METHOD_FETCH_ACCESS_TOKEN_FROM_CLIENT , mapOf("requestId" to requestId))
-        }
+                    // Store continuation to resume later
+                    pendingRequests[requestId] = continuation
 
-        try {
+                    // Remove continuation if coroutine is cancelled (timeout or manual cancellation)
+                    continuation.invokeOnCancellation {
+                        pendingRequests.remove(requestId)
+                    }
 
-            // Block with a reasonable timeout
-            val response = future.get(TIMEOUT_DURATION, TimeUnit.SECONDS)
-
-            return ChatSdkAccessTokenData(
-                (response["token"] as String?) ?: "",
-                (response["httpCode"] as Int?) ?: -1
-            )
+                    // Call Dart side method channel on main thread
+                    Handler(Looper.getMainLooper()).post {
+                        channel.invokeMethod(
+                            METHOD_FETCH_ACCESS_TOKEN_FROM_CLIENT,
+                            mapOf("requestId" to requestId)
+                        )
+                    }
+                }
+            }
+        } catch (e: TimeoutCancellationException) {
+            // Timeout happened, return fallback or error object
+            ChatSdkAccessTokenData("", -1)
         } catch (e: Exception) {
-            return ChatSdkAccessTokenData("", -1)
+            // Any other exception fallback
+            ChatSdkAccessTokenData("", -1)
         }
     }
 
