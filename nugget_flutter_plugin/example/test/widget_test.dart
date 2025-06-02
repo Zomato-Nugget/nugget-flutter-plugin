@@ -6,9 +6,16 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'package:flutter_nugget_impl/main.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+=======
+import 'package:flutter_test/flutter_test.dart';
+
+import 'package:nugget_flutter_plugin_example/main.dart';
+
+>>>>>>> 4ade6faafdd328c2b0d4550e89e7971b5f141c7a
 void main() {
   testWidgets('Verify Platform version', (WidgetTester tester) async {
     // Build our app and trigger a frame.

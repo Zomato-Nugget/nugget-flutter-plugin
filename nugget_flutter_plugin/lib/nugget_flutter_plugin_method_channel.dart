@@ -1,11 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+<<<<<<< HEAD
 import 'package:nugget_flutter_plugin/models/nugget_business_context.dart';
 import 'package:nugget_flutter_plugin/models/nugget_font_data.dart';
 import 'package:nugget_flutter_plugin/models/nugget_theme_data.dart';
 import 'dart:async';
 
 import 'interface/nugget_auth_provider_delegate.dart';
+=======
+import 'dart:async';
+
+>>>>>>> 4ade6faafdd328c2b0d4550e89e7971b5f141c7a
 import 'nugget_flutter_plugin_platform_interface.dart';
 
 /// An implementation of [NuggetFlutterPluginPlatform] that uses method channels.
@@ -14,6 +19,7 @@ class MethodChannelNuggetFlutterPlugin extends NuggetFlutterPluginPlatform {
   @visibleForTesting
   final methodChannel = const MethodChannel('nugget_flutter_plugin');
 
+<<<<<<< HEAD
   static String _namespace = "";
   static NuggetAuthProviderDelegate? _authProviderDelegate;
 
@@ -115,6 +121,78 @@ class MethodChannelNuggetFlutterPlugin extends NuggetFlutterPluginPlatform {
         .receiveBroadcastStream()
         .map<String>((dynamic event) => event as String);
     return _onTicketCreationSucceeded!;
+=======
+  // Event Channels for receiving streams from native
+  // Use distinct names for each stream
+  static const EventChannel _tokenUpdatedChannel =
+      EventChannel('nugget_flutter_plugin/onTokenUpdated');
+  static const EventChannel _permissionStatusChannel =
+      EventChannel('nugget_flutter_plugin/onPermissionStatusUpdated');
+  static const EventChannel _ticketSuccessChannel =
+      EventChannel('nugget_flutter_plugin/onTicketCreationSucceeded');
+  static const EventChannel _ticketFailureChannel =
+      EventChannel('nugget_flutter_plugin/onTicketCreationFailed');
+
+  // Cached stream instances to avoid creating new streams on every access
+  Stream<String>? _onTokenUpdated;
+  Stream<NuggetPushPermissionStatus>? _onPermissionStatusUpdated;
+  Stream<String>? _onTicketCreationSucceeded;
+  Stream<String?>? _onTicketCreationFailed;
+
+  @override
+  Future<void> initialize({
+    NuggetThemeData? theme,
+    NuggetFontData? font,
+  }) async {
+    // Prepare arguments map, including JSON maps for theme/font if provided
+    final Map<String, dynamic> arguments = {
+      'theme': theme?.toJson(), // Call toJson() if theme is not null
+      'font': font?.toJson(),   // Call toJson() if font is not null
+    };
+    arguments.removeWhere((key, value) => value == null);
+    await methodChannel.invokeMethod('initialize', arguments);
+  }
+
+  @override
+  Future<void> openChatWithCustomDeeplink({required String customDeeplink}) async {
+    // Prepare arguments map
+    final Map<String, dynamic> arguments = {
+      'customDeeplink': customDeeplink,
+    };
+    await methodChannel.invokeMethod('openChatWithCustomDeeplink', arguments);
+  }
+
+  @override
+  Stream<String> get onTokenUpdated {
+    _onTokenUpdated ??= _tokenUpdatedChannel
+        .receiveBroadcastStream()
+        .map<String>((dynamic event) => event as String);
+    return _onTokenUpdated!;
+  }
+
+  @override
+  Stream<NuggetPushPermissionStatus> get onPermissionStatusUpdated {
+    _onPermissionStatusUpdated ??= _permissionStatusChannel
+        .receiveBroadcastStream()
+        .map<NuggetPushPermissionStatus>((dynamic event) {
+            // Native side should send the raw integer value of the status
+            int statusValue = event is int ? event : int.tryParse(event.toString()) ?? 0;
+            // Convert integer to enum (ensure enum order matches native values)
+            return NuggetPushPermissionStatus.values.firstWhere(
+              (e) => e.index == statusValue, 
+              orElse: () => NuggetPushPermissionStatus.notDetermined // Default fallback
+            );
+        });
+    return _onPermissionStatusUpdated!;
+  }
+
+  @override
+  Stream<String> get onTicketCreationSucceeded {
+     _onTicketCreationSucceeded ??= _ticketSuccessChannel
+        .receiveBroadcastStream()
+        .map<String>((dynamic event) => event as String);
+     return _onTicketCreationSucceeded!;
+>>>>>>> 4ade6faafdd328c2b0d4550e89e7971b5f141c7a
   }
 
   @override
@@ -124,6 +202,7 @@ class MethodChannelNuggetFlutterPlugin extends NuggetFlutterPluginPlatform {
         .map<String?>((dynamic event) => event as String?);
     return _onTicketCreationFailed!;
   }
+<<<<<<< HEAD
 
   @override
   Stream<String> get onTokenUpdated {
@@ -162,4 +241,6 @@ class MethodChannelNuggetFlutterPlugin extends NuggetFlutterPluginPlatform {
       "notifsEnabled" : notifsEnabled
     });
   }
+=======
+>>>>>>> 4ade6faafdd328c2b0d4550e89e7971b5f141c7a
 }
