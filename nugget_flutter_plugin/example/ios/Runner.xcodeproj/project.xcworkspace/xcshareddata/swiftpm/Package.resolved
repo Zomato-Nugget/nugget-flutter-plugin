@@ -1,0 +1,60 @@
+{
+  "originHash" : "b556e7a221ccafc66bce8ff1ab4b52e43d3a87e4038ae4c69a4255a662c0cf27",
+  "pins" : [
+    {
+      "identity" : "alamofire",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Alamofire/Alamofire.git",
+      "state" : {
+        "revision" : "513364f870f6bfc468f9d2ff0a95caccc10044c5",
+        "version" : "5.10.2"
+      }
+    },
+    {
+      "identity" : "jtapplecalendar",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/patchthecode/JTAppleCalendar",
+      "state" : {
+        "revision" : "718f0ab68ba0fcd2bc134f6e9d30edc1b9b038e1",
+        "version" : "8.0.5"
+      }
+    },
+    {
+      "identity" : "nugget-sdk-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Zomato-Nugget/nugget-sdk-ios.git",
+      "state" : {
+        "revision" : "6dd619168b51f1b863eb2904196ae2cafbd635e7",
+        "version" : "0.0.4"
+      }
+    },
+    {
+      "identity" : "nuke",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kean/Nuke.git",
+      "state" : {
+        "revision" : "0ead44350d2737db384908569c012fe67c421e4d",
+        "version" : "12.8.0"
+      }
+    },
+    {
+      "identity" : "zmarkupparser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/BudhirajaRajesh/ZMarkupParser.git",
+      "state" : {
+        "revision" : "1a8d300c5535510e54c2881e8de610ff84365608",
+        "version" : "2.0.0"
+      }
+    },
+    {
+      "identity" : "znstextattachment",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/BudhirajaRajesh/ZNSTextAttachment",
+      "state" : {
+        "revision" : "5cbc12dfb3603ff613de51040c42c5a5adfc16dc",
+        "version" : "2.0.0"
+      }
+    }
+  ],
+  "version" : 3
+}
