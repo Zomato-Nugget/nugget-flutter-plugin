@@ -15,7 +15,7 @@ final _plugin = NuggetFlutterPlugin();
 const String namespace = "namespace";
 
 final class DummyTokenProvider implements NuggetAuthProviderDelegate {
-  final String accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBWZXJzaW9uIjoiIiwiYnVzaW5lc3NJZCI6MSwiY2xpZW50SWQiOjEsImNsaWVudF9uYW1lIjoic3Rhc2hmaW4iLCJkaXNwbGF5TmFtZSI6IlByYW5hdiBzdGFzaGZpbiB0ZXN0IiwiZW1haWwiOiIiLCJleHAiOjE3NDkwMTg1MzgsImhvc3ROYW1lIjoic3Rhc2hmaW4ubnVnZ2V0LmNvbSIsImlhdCI6MTc0ODkzMjEzOCwicGhvbmVOdW1iZXIiOiI3ODk3NTcwNjk1IiwicGhvdG9VUkwiOiIiLCJzb3VyY2UiOiJhbmRyb2lkIiwidGVuYW50SUQiOjE1LCJ1aWQiOiJrdWxjaGEifQ.Mks6zlqrI6rAaQeJfNjvkRg1eCVG29aByL0TwMYaAao";
+  final String accessToken = "";
   final int httpStatusCode = 200;
   String requestId = "-1";
 
