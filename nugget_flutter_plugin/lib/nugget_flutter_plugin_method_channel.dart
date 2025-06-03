@@ -60,7 +60,9 @@ class MethodChannelNuggetFlutterPlugin extends NuggetFlutterPluginPlatform {
     switch (call.method) {
       case 'requireAuthInfo' || 'fetchAccessTokenFromClient':
         try {
-          final authInfo = await _authProviderDelegate?.requireAuthInfo();
+          final args = call.arguments as Map;
+          final String requestId = args['requestId'] as String? ?? "-1";
+          final authInfo = await _authProviderDelegate?.requireAuthInfo(requestId);
           if (authInfo == null) {
             throw PlatformException(
               code: 'AUTH_ERROR',
@@ -77,7 +79,9 @@ class MethodChannelNuggetFlutterPlugin extends NuggetFlutterPluginPlatform {
 
       case 'refreshAuthInfo':
         try {
-          final authInfo = await _authProviderDelegate?.refreshAuthInfo();
+          final args = call.arguments as Map;
+          final String requestId = args['requestId'] as String? ?? "-1";
+          final authInfo = await _authProviderDelegate?.refreshAuthInfo(requestId);
           if (authInfo == null) {
             throw PlatformException(
               code: 'REFRESH_ERROR',
