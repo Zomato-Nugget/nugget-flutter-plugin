@@ -35,6 +35,7 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.TimeoutCancellationException
+import android.os.Bundle
 
 /**
  * Created by Kunal Chhabra on 18 May 2025
@@ -58,6 +59,7 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
         const val METHOD_OPEN_CHAT = "openChatWithCustomDeeplink"
         const val METHOD_SYNC_FCM_TOKEN = "syncFCMToken"
         const val METHOD_FETCH_ACCESS_TOKEN_FROM_CLIENT = "fetchAccessTokenFromClient"
+        const val HANDLE_DEEPLINK_INSIDE_APP = "handleDeeplinkInsideApp"
 
         const val TIMEOUT_DURATION = 15000L // milliseconds
     }
@@ -131,9 +133,20 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
                                 val resolvedStyle = getStyleResourceId(activity , styleName?.replace(Regex("[^A-Za-z0-9]"), ""))
                                 return resolvedStyle
                             }
+
+                            override fun triggerDeeplinkInApp(context: Context, url: String?, bundle: Bundle?) {
+                                Handler(Looper.getMainLooper()).post {
+                                    channel.invokeMethod(
+                                        HANDLE_DEEPLINK_INSIDE_APP,
+                                        mapOf("deeplink" to url)
+                                    )
+                                }
+                            }
+
                         },
                         initConfig = ChatSdkInitConfig(
-                            namespace =  call.argument<String>("namespace") ?: ""
+                            namespace =  call.argument<String>("namespace") ?: "",
+                            handleDeeplinkInApp = call.argument<Boolean?>("handleDeeplinkInsideApp") ?: false
                         ))
 
                     isInitialized = true

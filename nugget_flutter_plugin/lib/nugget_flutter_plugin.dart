@@ -18,8 +18,9 @@ class NuggetFlutterPlugin {
   Future<void> initialize(String namespace,
       NuggetBusinessContext? businessContext,
       NuggetFontData? fontData,
-      NuggetThemeData? themeData) async {
-    return NuggetFlutterPluginPlatform.instance.initialize(namespace, businessContext, fontData, themeData);
+      NuggetThemeData? themeData,
+      bool? handleDeeplinkInsideApp) async {
+    return NuggetFlutterPluginPlatform.instance.initialize(namespace, businessContext, fontData, themeData, handleDeeplinkInsideApp);
   }
 
   /// Stream providing the conversation ID when a ticket is successfully created.

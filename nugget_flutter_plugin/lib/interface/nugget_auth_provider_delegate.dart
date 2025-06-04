@@ -4,4 +4,5 @@ abstract class NuggetAuthProviderDelegate {
     Future<NuggetAuthInfo?> requireAuthInfo(String requestId);
     Future<NuggetAuthInfo?> refreshAuthInfo(String requestId);
     Future<String?> fetchAccessTokenFromClient();
+    Future<String> handleDeeplinkInsideApp(String deeplink);
 } 

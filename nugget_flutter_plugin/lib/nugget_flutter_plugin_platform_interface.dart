@@ -40,7 +40,8 @@ abstract class NuggetFlutterPluginPlatform extends PlatformInterface {
   Future<void> initialize(String namespace,
       NuggetBusinessContext? businessContext,
       NuggetFontData? fontData,
-      NuggetThemeData? nuggetThemeData) {
+      NuggetThemeData? nuggetThemeData,
+      bool? handleDeeplinkInsideApp) {
     throw UnimplementedError('initialize() has not been implemented');
   }
 

@@ -45,6 +45,12 @@ final class DummyTokenProvider implements NuggetAuthProviderDelegate {
     _plugin.sendAccessTokenResponse(accessToken, httpStatusCode, requestId);
     return accessToken;
   }
+
+  @override
+  Future<String> handleDeeplinkInsideApp(String deeplink) async {
+    // handle your deeplink here
+    return "deeplink handled";
+  }
 }
 
 void main() async {
@@ -109,7 +115,8 @@ void main() async {
   _plugin.initialize(namespace,
       null,
       await getFontConfiguration(),
-      getThemeConfiguration());
+      getThemeConfiguration(),
+      false); // pass true/false depending on whether you want to handle deeplink inside app or system handles it.
   runApp(const MyApp());
 }
 

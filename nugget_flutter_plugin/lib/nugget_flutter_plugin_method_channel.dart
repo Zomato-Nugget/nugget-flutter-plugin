@@ -45,7 +45,8 @@ class MethodChannelNuggetFlutterPlugin extends NuggetFlutterPluginPlatform {
   Future<void> initialize(String namespace,
       NuggetBusinessContext? businessContext,
       NuggetFontData? nuggetFontData,
-      NuggetThemeData? nuggetThemeData) async {
+      NuggetThemeData? nuggetThemeData,
+      bool? handleDeeplinkInsideApp) async {
     MethodChannelNuggetFlutterPlugin._namespace = namespace;
     methodChannel.setMethodCallHandler(_handleMethodCall);
     await methodChannel.invokeMethod('initialize', {
@@ -53,6 +54,7 @@ class MethodChannelNuggetFlutterPlugin extends NuggetFlutterPluginPlatform {
       "fontData": nuggetFontData?.toJson(),
       "themeData":  nuggetThemeData?.toJson(),
       "businessContext": businessContext?.toJson(),
+      "handleDeeplinkInsideApp": handleDeeplinkInsideApp
     });
   }
 
@@ -98,6 +100,12 @@ class MethodChannelNuggetFlutterPlugin extends NuggetFlutterPluginPlatform {
 
       case 'jumboConfiguration':
         return {"namespace": MethodChannelNuggetFlutterPlugin._namespace};
+
+      case 'handleDeeplinkInsideApp' :
+        final args = call.arguments as Map;
+        final String deeplink = args['deeplink'] as String? ?? "";
+        final result = await _authProviderDelegate?.handleDeeplinkInsideApp(deeplink);
+        return result ?? "no_result";
 
       default:
         throw MissingPluginException('Method ${call.method} not implemented');
