@@ -63,7 +63,7 @@ class MethodChannelNuggetFlutterPlugin extends NuggetFlutterPluginPlatform {
       case 'requireAuthInfo' || 'fetchAccessTokenFromClient':
         try {
           final args = call.arguments;
-          final requestId = (args is Map<String, dynamic>) ? args['requestId'] as String? ?? "-1" : "-1";
+          final requestId = (args is Map<dynamic, dynamic>) ? args['requestId'] as String? ?? "-1" : "-1";
 
           if (_authProviderDelegate == null) {
             throw PlatformException(
