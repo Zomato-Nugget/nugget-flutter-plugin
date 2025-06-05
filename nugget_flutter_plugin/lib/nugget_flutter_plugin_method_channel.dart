@@ -62,34 +62,52 @@ class MethodChannelNuggetFlutterPlugin extends NuggetFlutterPluginPlatform {
     switch (call.method) {
       case 'requireAuthInfo' || 'fetchAccessTokenFromClient':
         try {
-          final args = call.arguments as Map;
-          final String requestId = args['requestId'] as String? ?? "-1";
-          final authInfo = await _authProviderDelegate?.requireAuthInfo(requestId);
+          final args = call.arguments;
+          final requestId = (args is Map<String, dynamic>) ? args['requestId'] as String? ?? "-1" : "-1";
+
+          if (_authProviderDelegate == null) {
+            throw PlatformException(
+              code: 'AUTH_ERROR',
+              message: 'Auth provider delegate is not available',
+            );
+          }
+
+          final authInfo = await _authProviderDelegate!.requireAuthInfo(requestId);
           if (authInfo == null) {
             throw PlatformException(
               code: 'AUTH_ERROR',
               message: 'Auth provider returned null',
             );
           }
+
           return authInfo.toJson();
-        } catch (e) {
+        } catch (e, stackTrace) {
           throw PlatformException(
             code: 'AUTH_ERROR',
-            message: 'Error getting auth info: $e',
+            message: 'Error getting auth info: ${e.toString()}',
           );
         }
 
       case 'refreshAuthInfo':
         try {
-          final args = call.arguments as Map;
-          final String requestId = args['requestId'] as String? ?? "-1";
-          final authInfo = await _authProviderDelegate?.refreshAuthInfo(requestId);
+          final args = call.arguments;
+          final String requestId = (args is Map) ? args['requestId'] as String? ?? "-1" : "-1";
+
+          if (_authProviderDelegate == null) {
+            throw PlatformException(
+              code: 'REFRESH_ERROR',
+              message: 'Auth provider delegate is not available',
+            );
+          }
+
+          final authInfo = await _authProviderDelegate!.refreshAuthInfo(requestId);
           if (authInfo == null) {
             throw PlatformException(
               code: 'REFRESH_ERROR',
               message: 'Auth provider returned null during refresh',
             );
           }
+
           return authInfo.toJson();
         } catch (e) {
           throw PlatformException(
@@ -97,6 +115,7 @@ class MethodChannelNuggetFlutterPlugin extends NuggetFlutterPluginPlatform {
             message: 'Error refreshing auth info: $e',
           );
         }
+
 
       case 'jumboConfiguration':
         return {"namespace": MethodChannelNuggetFlutterPlugin._namespace};
