@@ -24,7 +24,7 @@ final class DummyTokenProvider implements NuggetAuthProviderDelegate {
     this.requestId = requestId;
     fetchAccessTokenFromClient();
     return NuggetAuthInfoImp(
-        accessToken: accessToken,
+        accessToken: '',
         httpStatusCode: httpStatusCode,
         requestId: requestId);
   }
@@ -34,7 +34,7 @@ final class DummyTokenProvider implements NuggetAuthProviderDelegate {
     this.requestId = requestId;
     fetchAccessTokenFromClient();
     return NuggetAuthInfoImp(
-        accessToken: accessToken,
+        accessToken: '',
         httpStatusCode: httpStatusCode,
         requestId: requestId);
   }
@@ -118,6 +118,8 @@ void main() async {
       getThemeConfiguration(),
       false); // pass true/false depending on whether you want to handle deeplink inside app or system handles it.
   runApp(const MyApp());
+
+  _plugin.syncFCMToken('abcd', true);
 }
 
 class MyApp extends StatefulWidget {
