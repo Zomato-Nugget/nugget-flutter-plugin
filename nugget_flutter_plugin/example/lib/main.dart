@@ -1,45 +1,147 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-// Import the main plugin file, which now exports the handler
+import 'package:flutter/services.dart';
+import 'package:nugget_flutter_plugin/interface/nugget_auth_info.dart';
+import 'package:nugget_flutter_plugin/interface/nugget_auth_provider_delegate.dart';
+import 'package:nugget_flutter_plugin/models/nugget_auth_info_imp.dart';
+import 'package:nugget_flutter_plugin/models/nugget_business_context.dart';
+import 'package:nugget_flutter_plugin/models/nugget_font_data.dart';
+import 'package:nugget_flutter_plugin/models/nugget_theme_data.dart';
+import 'package:nugget_flutter_plugin/nugget_flutter_plugin_method_channel.dart';
 import 'package:nugget_flutter_plugin/nugget_flutter_plugin.dart';
 
-void main() {
-  // Ensure bindings are initialized before calling plugin code
+final _plugin = NuggetFlutterPlugin();
+const String namespace = "namespace";
+
+final class DummyTokenProvider implements NuggetAuthProviderDelegate {
+  final String accessToken = "";
+  final int httpStatusCode = 200;
+  String requestId = "-1";
+
+  @override
+  Future<NuggetAuthInfo?> requireAuthInfo(String requestId) async {
+    this.requestId = requestId;
+    fetchAccessTokenFromClient();
+    return NuggetAuthInfoImp(
+        accessToken: '',
+        httpStatusCode: httpStatusCode,
+        requestId: requestId);
+  }
+
+  @override
+  Future<NuggetAuthInfo?> refreshAuthInfo(String requestId) async {
+    this.requestId = requestId;
+    fetchAccessTokenFromClient();
+    return NuggetAuthInfoImp(
+        accessToken: '',
+        httpStatusCode: httpStatusCode,
+        requestId: requestId);
+  }
+
+  // Method to handle fetchAccessTokenFromClient
+  @override
+  Future<String?> fetchAccessTokenFromClient() async {
+    _plugin.sendAccessTokenResponse(accessToken, httpStatusCode, requestId);
+    return accessToken;
+  }
+
+  @override
+  Future<String> handleDeeplinkInsideApp(String deeplink) async {
+    // handle your deeplink here
+    return "deeplink handled";
+  }
+}
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize the handler for native -> Dart calls
-  NuggetPluginNativeCallbackHandler.initializeHandler();
+  final dummyTokenProvider = DummyTokenProvider();
+  MethodChannelNuggetFlutterPlugin.setAuthProvider(dummyTokenProvider);
 
+  Future<NuggetFontData> getFontConfiguration() async {
+    final Map<NuggetFontWeight, String> weightMap = {
+      NuggetFontWeight.light: 'NunitoSans-12ptExtraLight',
+      NuggetFontWeight.regular: 'NunitoSans-12ptExtraLight',
+      NuggetFontWeight.medium: 'NunitoSans-12ptExtraLight',
+      NuggetFontWeight.semiBold: 'NunitoSans-12ptExtraLight',
+      NuggetFontWeight.bold: 'NunitoSans-12ptExtraLight',
+      NuggetFontWeight.extraBold: 'NunitoSans-12ptExtraLight',
+      NuggetFontWeight.black: 'NunitoSans-12ptExtraLight',
+    };
+
+    final Map<NuggetFontSize, int> sizeMap = {
+      NuggetFontSize.font050: 10,
+      NuggetFontSize.font100: 12,
+      NuggetFontSize.font200: 14,
+      NuggetFontSize.font300: 16,
+      NuggetFontSize.font400: 18,
+      NuggetFontSize.font500: 20,
+      NuggetFontSize.font600: 24,
+      NuggetFontSize.font700: 28,
+      NuggetFontSize.font800: 32,
+      NuggetFontSize.font900: 36,
+    };
+
+    final playwriteData = await rootBundle.load('assets/fonts/PlaywriteHU-Thin.ttf');
+    final playwriteBytes = playwriteData.buffer.asUint8List();
+
+    final nunitoSans = await rootBundle.load('assets/fonts/nunito_sans.ttf');
+    final nunitoSansBytes = nunitoSans.buffer.asUint8List();
+
+    return NuggetFontData(
+        fontName: 'NunitoSans',
+        fontFamily: 'Medium',
+        fontWeightMapping: weightMap,
+        fontSizeMapping: sizeMap,
+        fontsData: [playwriteBytes, nunitoSansBytes]);
+  }
+
+  NuggetThemeData getThemeConfiguration() {
+    return NuggetThemeData(
+        defaultDarkModeAccentHexColor: "#1A73E8",
+        defaultLightModeAccentHexColor: "#34A853",
+        deviceInterfaceStyle: NuggetInterfaceStyle.system);
+  }
+
+  NuggetBusinessContext getBusinessContext() {
+    return NuggetBusinessContext(
+        channelHandle: "channelHandle",
+        botProperties: {
+          "ABC": ["DEF"]
+        });
+  }
+
+  _plugin.initialize(namespace,
+      null,
+      await getFontConfiguration(),
+      getThemeConfiguration(),
+      false); // pass true/false depending on whether you want to handle deeplink inside app or system handles it.
   runApp(const MyApp());
+
+  _plugin.syncFCMToken('abcd', true);
 }
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
-
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  final _plugin = NuggetFlutterPlugin();
   final _deeplinkController = TextEditingController();
   static const _deeplinkPrefKey = 'saved_deeplink';
 
-  bool _isInitialized = false;
-  String _status = 'SDK Not Initialized';
-  
+  bool _isFontConfigured = false; // Add new state variable
+
   // --- ADDED State for Push Info ---
-  String? _latestToken = "Not received yet";
-  NuggetPushPermissionStatus? _latestPermissionStatus;
+  final String _latestToken = "Not received yet";
   // --- END ADDED State ---
-  
+
   // REMOVED Callbacks state (Keep if needed for Ticket/Other callbacks)
   // final List<String> _callbackMessages = [];
   // StreamSubscription? _ticketSuccessSubscription;
   // StreamSubscription? _ticketFailureSubscription;
-  
   // --- ADDED Subscriptions for Push Info ---
   StreamSubscription? _tokenSubscription;
   StreamSubscription? _permissionStatusSubscription;
@@ -52,7 +154,6 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _loadSavedDeeplink();
-    _listenToPushEvents();
   }
 
   @override
@@ -67,90 +168,43 @@ class _MyAppState extends State<MyApp> {
   // _listenToCallbacks method removed
 
   Future<void> _loadSavedDeeplink() async {
-    final prefs = await SharedPreferences.getInstance();
-    final savedDeeplink = prefs.getString(_deeplinkPrefKey);
-    if (savedDeeplink != null && mounted) {
-      _deeplinkController.text = savedDeeplink;
-    }
-  }
-
-  Future<void> _initializeSdk() async {
-    setState(() {
-      _status = 'Initializing...';
-      // _callbackMessages.clear(); // Removed
-    });
-    try {
-      // Example Theme/Font data (replace with actual data if needed)
-      final theme = NuggetThemeData(
-        tintColorHex: "#FF0000", // Example: Red tint
-        interfaceStyle: NuggetInterfaceStyle.light,
-      );
-      // final font = NuggetFontData(...); // Define if needed
-
-      await _plugin.initialize(
-        theme: theme,
-        // font: font,
-      );
-      if (mounted) {
-        setState(() {
-          _isInitialized = true;
-          _status = 'SDK Initialized Successfully';
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _isInitialized = false;
-          _status = 'SDK Initialization Failed: $e';
-        });
-      }
-    }
+    // final prefs = await SharedPreferences.getInstance();
+    // final savedDeeplink = prefs.getString(_deeplinkPrefKey);
+    // if (savedDeeplink != null && mounted) {
+    //   _deeplinkController.text = savedDeeplink;
+    // }
   }
 
   // Updated to handle initialization check and call
   Future<void> _openChatModally(BuildContext scaffoldContext) async {
-    // Check if initialized, if not, try to initialize
-    if (!_isInitialized) {
-      ScaffoldMessenger.of(scaffoldContext).showSnackBar(
-        const SnackBar(content: Text('SDK not initialized. Attempting initialization...'), duration: Duration(seconds: 1)),
-      );
-      // Wait for initialization attempt to complete
-      await _initializeSdk(); 
-
-      // Check again after initialization attempt
-      if (!_isInitialized) {
-         ScaffoldMessenger.of(scaffoldContext).showSnackBar(
-           const SnackBar(content: Text('Initialization failed. Cannot open chat.'), duration: Duration(seconds: 2)),
-         );
-         return; // Stop if initialization failed
+    // Check font configuration
+    if (!_isFontConfigured) {
+      try {
+        if (mounted) {
+          setState(() {
+            _isFontConfigured = true;
+          });
+        }
+      } catch (fontError) {
+        // Show warning but continue
+        ScaffoldMessenger.of(scaffoldContext).showSnackBar(
+          const SnackBar(
+              content: Text(
+                  'Warning: Font configuration failed. Chat may have display issues.'),
+              duration: Duration(seconds: 2)),
+        );
       }
-      // If we reach here, initialization was successful
-      ScaffoldMessenger.of(scaffoldContext).showSnackBar(
-         const SnackBar(content: Text('Initialization successful. Opening chat...'), duration: Duration(seconds: 1)),
-       );
-       // Add a small delay for the snackbar to be visible before navigation/presentation
-       await Future.delayed(const Duration(milliseconds: 800)); 
     }
 
-    // --- Proceed with opening chat (if initialized) ---
     final deeplink = _deeplinkController.text.trim();
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_deeplinkPrefKey, deeplink);
+    // final prefs = await SharedPreferences.getInstance();
+    // await prefs.setString(_deeplinkPrefKey, deeplink);
 
-    // No need for another "Opening chat..." SnackBar here as the init one covers it
-    // ScaffoldMessenger.of(scaffoldContext).showSnackBar(
-    //   SnackBar(content: Text('Opening chat with deeplink: "$deeplink"...')),
-    // );
     try {
       await _plugin.openChatWithCustomDeeplink(customDeeplink: deeplink);
-      // Optionally show success message
-      // ScaffoldMessenger.of(scaffoldContext).showSnackBar(
-      //   const SnackBar(content: Text('Chat open request sent.')),
-      // );
     } catch (e) {
-      // Show error message
-      if (mounted) { 
+      if (mounted) {
         ScaffoldMessenger.of(scaffoldContext).showSnackBar(
           SnackBar(content: Text('Error opening chat: $e')),
         );
@@ -160,7 +214,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    // Start of MaterialApp widget
     return MaterialApp(
       // MaterialApp has a `home` property
       home: Scaffold(
@@ -172,7 +225,8 @@ class _MyAppState extends State<MyApp> {
         // Use Builder to get the correct context for ScaffoldMessenger
         body: Builder(
           // Builder has a `builder` property which is a function
-          builder: (builderContext) { // Use a different name like builderContext
+          builder: (builderContext) {
+            // Use a different name like builderContext
             // This function MUST return a Widget
             return Padding(
               padding: const EdgeInsets.all(16.0),
@@ -196,12 +250,9 @@ class _MyAppState extends State<MyApp> {
                     child: const Text('Open Chat (via Deeplink)'),
                   ), // End of ElevatedButton (Open Chat)
                   const SizedBox(height: 10),
-                  Text('Status: $_status'),
-                  const SizedBox(height: 10),
                   Text('Push Token: ${_latestToken ?? "N/A"}'), // Display token
                   const SizedBox(height: 10),
                   // Display permission status nicely
-                  Text('Permission Status: ${_latestPermissionStatus?.name ?? "N/A"}'), 
                 ], // End of children list for Column
               ), // End of Column
             ); // End of Padding (Return value for Builder's builder function)
@@ -210,60 +261,4 @@ class _MyAppState extends State<MyApp> {
       ), // End of Scaffold widget
     ); // End of MaterialApp widget
   } // End of build method
-
-  // --- ADDED Push Event Listener Setup ---
-  void _listenToPushEvents() {
-    _tokenSubscription = _plugin.onTokenUpdated.listen(
-      (token) {
-        if (mounted) {
-          setState(() {
-            _latestToken = token;
-          });
-          print("Example App: Received Token: $token");
-        }
-      },
-      onError: (error) {
-         if (mounted) {
-          setState(() {
-            _latestToken = "Error: $error";
-          });
-           print("Example App: Token Stream Error: $error");
-        }
-      },
-      onDone: () {
-         if (mounted) { // Should not happen for broadcast streams unless plugin is disposed
-           setState(() {
-              _latestToken = "Stream Closed";
-           });
-            print("Example App: Token Stream Closed");
-         }
-      }
-    );
-
-    _permissionStatusSubscription = _plugin.onPermissionStatusUpdated.listen(
-      (status) {
-         if (mounted) {
-          setState(() {
-            _latestPermissionStatus = status;
-          });
-           print("Example App: Received Permission Status: $status");
-        }
-      },
-       onError: (error) {
-         if (mounted) {
-           setState(() {
-             _latestPermissionStatus = null; // Indicate error state
-             // Maybe display error differently?
-           });
-           print("Example App: Permission Status Stream Error: $error");
-         }
-       },
-       onDone: () {
-          if (mounted) {
-            print("Example App: Permission Status Stream Closed");
-          }
-       }
-    );
-  }
-  // --- END ADDED Listener Setup ---
 } // End of _MyAppState class

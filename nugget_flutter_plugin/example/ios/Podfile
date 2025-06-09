@@ -35,6 +35,8 @@ target 'Runner' do
   # flutter_install_all_ios_pods sets up all Flutter plugin pods
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 
+  pod 'NuggetSDK', :git => 'https://github.com/Zomato-Nugget/nugget-sdk-ios', :tag => '0.0.8'
+
   target 'RunnerTests' do
     inherit! :search_paths
   end

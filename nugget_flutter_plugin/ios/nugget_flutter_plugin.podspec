@@ -9,12 +9,13 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC
 Plugin to integrate Nugget SDK in Flutter.
                        DESC
-  s.homepage         = 'https://github.com/BudhirajaRajesh/NuggetSDK'
+  s.homepage         = 'https://github.com/Zomato-Nugget/nugget-sdk-ios'
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Zomato' => 'rajesh.budhiraja@zomato.com' }
   s.source           = { :path => '.' }
   s.source_files = 'nugget_flutter_plugin/Sources/nugget_flutter_plugin/**/*'
   s.dependency 'Flutter'
+  s.dependency 'NuggetSDK'
   s.platform = :ios, '14.0'
 
   # Flutter.framework does not contain a i386 slice.

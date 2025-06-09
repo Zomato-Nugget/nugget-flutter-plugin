@@ -1,5 +1,5 @@
 {
-  "originHash" : "2584fb210befd6877d8904c4cda25b80d2ee974c079eead2037821c744ff0b90",
+  "originHash" : "b556e7a221ccafc66bce8ff1ab4b52e43d3a87e4038ae4c69a4255a662c0cf27",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -20,39 +20,12 @@
       }
     },
     {
-      "identity" : "lottie-spm",
+      "identity" : "nugget-sdk-ios",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/airbnb/lottie-spm.git",
+      "location" : "https://github.com/Zomato-Nugget/nugget-sdk-ios.git",
       "state" : {
-        "revision" : "8c6edf4f0fa84fe9c058600a4295eb0c01661c69",
-        "version" : "4.5.1"
-      }
-    },
-    {
-      "identity" : "nuggetexternaldependecy",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/BudhirajaRajesh/NuggetExternalDependecy",
-      "state" : {
-        "revision" : "d7f4809a8e6f8c6d2699b2114d03057e3f55bc54",
-        "version" : "1.1.1"
-      }
-    },
-    {
-      "identity" : "nuggetinternaldependency",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/BudhirajaRajesh/NuggetInternalDependency",
-      "state" : {
-        "revision" : "8013f03bbfd3f0e65cdf417422c3d0b9696a5d08",
-        "version" : "1.1.4"
-      }
-    },
-    {
-      "identity" : "nuggetsdk",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/BudhirajaRajesh/NuggetSDK.git",
-      "state" : {
-        "revision" : "5b8fc383ec55168341b30ccb48c8a8c8edd3981c",
-        "version" : "1.1.13"
+        "revision" : "6dd619168b51f1b863eb2904196ae2cafbd635e7",
+        "version" : "0.0.4"
       }
     },
     {
