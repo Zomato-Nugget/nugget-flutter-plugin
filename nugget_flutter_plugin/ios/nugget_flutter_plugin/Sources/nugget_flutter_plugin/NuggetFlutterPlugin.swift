@@ -33,19 +33,12 @@ public class NuggetFlutterPlugin: NSObject, FlutterPlugin {
     private var customFontProviderDelegate: NuggetFontProviderDelegate?
     private var businessContextProviderDelegate: NuggetBusinessContextProviderDelegate?
     private var ticketCreationDelegate: NuggetTicketCreationDelegate?
-    private var tokenHandler: NuggetFlutterPluginEventStreamHandler?
     
     private static var instance: NuggetFlutterPlugin?
     
     // Other properties
     let channel: FlutterMethodChannel
     var nuggetFactory: NuggetFactory?
-
-    // permissionHandler remains internally managed as it's specific to plugin's event channels not SDK init
-    private let permissionHandler = NuggetFlutterPluginEventStreamHandler()
-    
-    private var tokenObserver: NSObjectProtocol?
-    private var permissionObserver: NSObjectProtocol?
     
     // Add property to retain chat view controller during presentation
     private var presentedChatViewController: UIViewController?
@@ -53,39 +46,6 @@ public class NuggetFlutterPlugin: NSObject, FlutterPlugin {
     init(channel: FlutterMethodChannel) {
         self.channel = channel
         super.init()
-        addNotificationObservers()
-    }
-    
-    private func addNotificationObservers() {
-        let tokenNotificationName = Notification.Name("AppDidReceivePushToken")
-        let permissionNotificationName = Notification.Name("AppPushPermissionStatusUpdated")
-        
-        tokenObserver = NotificationCenter.default.addObserver(forName: tokenNotificationName, object: nil, queue: nil) { [weak self] notification in
-            if let token = notification.userInfo?["token"] as? String {
-                self?.tokenHandler?.sendEvent(data: token)
-            }
-        }
-        
-        permissionObserver = NotificationCenter.default.addObserver(forName: permissionNotificationName, object: nil, queue: nil) { [weak self] notification in
-            if let status = notification.userInfo?["status"] as? Int {
-                self?.permissionHandler.sendEvent(data: status)
-            }
-        }
-    }
-    
-    private func removeNotificationObservers() {
-        if let observer = tokenObserver {
-            NotificationCenter.default.removeObserver(observer)
-            tokenObserver = nil
-        }
-        if let observer = permissionObserver {
-            NotificationCenter.default.removeObserver(observer)
-            permissionObserver = nil
-        }
-    }
-    
-    deinit {
-        removeNotificationObservers()
     }
     
     public static func register(with registrar: FlutterPluginRegistrar) {
@@ -123,7 +83,7 @@ public class NuggetFlutterPlugin: NSObject, FlutterPlugin {
             result(FlutterError(code: "INIT_FAILED", message: "Missing required nuggetAuthProvider delegate", details: nil))
             return
         }
-                
+        
         guard let notificationDelegate = Self.instance?.notificationDelegate else {
             result(FlutterError(code: "INIT_FAILED", message: "Missing required notification delegate", details: nil))
             return
@@ -156,7 +116,7 @@ public class NuggetFlutterPlugin: NSObject, FlutterPlugin {
         } else {
             businessContextProviderDelegate = nil
         }
-            
+        
         self.nuggetFactory = NuggetSDK.initializeNuggetFactory(
             authDelegate: nuggetAuthProvider,
             notificationDelegate: notificationDelegate,
@@ -173,7 +133,7 @@ public class NuggetFlutterPlugin: NSObject, FlutterPlugin {
             result(FlutterError(code: "INIT_FAILED", message: "Native NuggetSDK initialization returned nil", details: nil))
         }
     }
-
+    
     private func handleOpenChatWithCustomDeeplink(call: FlutterMethodCall, result: @escaping FlutterResult) {
         guard let args = call.arguments as? [String: Any],
               let customDeeplink = args["customDeeplink"] as? String else {
@@ -237,14 +197,14 @@ public class NuggetFlutterPlugin: NSObject, FlutterPlugin {
             }
         }
     }
-
+    
     private func handleSyncFCMToken(call: FlutterMethodCall, result: @escaping FlutterResult) {
-         guard let args = call.arguments as? [String: Any] else {
+        guard let args = call.arguments as? [String: Any] else {
             return
-         }
-         let token = args["fcmToken"]
-         let isNotificationsEnabled = args["notifsEnabled"]
-         self.tokenHandler?.sendEvent(data: token)
-         self.permissionHandler.sendEvent(data: isNotificationsEnabled)
+        }
+        let token = args["fcmToken"] as? String ?? ""
+        let isNotificationsEnabled = args["notifsEnabled"] as? Bool ?? false
+        self.notificationDelegate?.tokenUpdated(to: token)
+        self.notificationDelegate?.permissionStatusUpdated(to: isNotificationsEnabled ? .authorized : .denied)
     }
 }
