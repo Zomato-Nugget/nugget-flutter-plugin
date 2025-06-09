@@ -92,4 +92,10 @@ abstract class NuggetFlutterPluginPlatform extends PlatformInterface {
     throw UnimplementedError(
         'openChatWithCustomDeeplink() has not been implemented');
   }
+
+  /// sends current client app's dark theme status to native files which then toggles the theme inside SDK.
+  void sendCurrentDarkThemeStatus(bool isDarkTheme) {
+    throw UnimplementedError('sendCurrentDarkThemeStatus has not been implemented');
+  }
+
 }

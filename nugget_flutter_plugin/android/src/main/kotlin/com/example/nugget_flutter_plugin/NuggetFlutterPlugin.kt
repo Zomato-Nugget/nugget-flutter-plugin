@@ -52,6 +52,8 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
 
     private val pendingRequests = ConcurrentHashMap<String, Continuation<ChatSdkAccessTokenData>>()
 
+    private var isClientDarkThemeEnabled : Boolean = false
+
     companion object {
         const val CHANNEL_NAME = "nugget_flutter_plugin"
         const val METHOD_INITIALIZE = "initialize"
@@ -60,6 +62,7 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
         const val METHOD_SYNC_FCM_TOKEN = "syncFCMToken"
         const val METHOD_FETCH_ACCESS_TOKEN_FROM_CLIENT = "fetchAccessTokenFromClient"
         const val HANDLE_DEEPLINK_INSIDE_APP = "handleDeeplinkInsideApp"
+        const val METHOD_CLIENT_DARK_THEME_STATUS = "clientDarkThemeStatus"
 
         const val TIMEOUT_DURATION = 15000L // milliseconds
     }
@@ -143,6 +146,10 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
                                 }
                             }
 
+                            override fun isDarkModeEnabled(): Boolean {
+                                return isClientDarkThemeEnabled
+                            }
+
                         },
                         initConfig = ChatSdkInitConfig(
                             namespace =  call.argument<String>("namespace") ?: "",
@@ -212,6 +219,11 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
                         notificationEnabled = (notifsEnabled == true)
                     )
                 )
+            }
+
+            METHOD_CLIENT_DARK_THEME_STATUS -> {
+                isClientDarkThemeEnabled = call.argument<Boolean>("darkThemeEnabled") ?: false
+                result.success(true)
             }
 
             else -> {

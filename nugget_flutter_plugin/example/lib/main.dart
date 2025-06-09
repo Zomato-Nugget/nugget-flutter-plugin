@@ -112,6 +112,10 @@ void main() async {
         });
   }
 
+  // Client app is responsible for setting current theme status before initialising NuggetSDK.
+  // If theme is refreshed from dark to light or vice versa by a button toggle (or any other client implementation) , again call this method to update plugin.
+  _plugin.sendCurrentDarkThemeStatus(false);
+
   _plugin.initialize(namespace,
       null,
       await getFontConfiguration(),
