@@ -99,11 +99,11 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
                     ChatSdk.initialize(
                         application,
                         initInterface = object : ChatSDKInitCommunicator {
-                            override suspend fun getAccessTokenData(): ChatSdkAccessTokenData {
+                            override suspend fun getAccessTokenData(payloadArgs: HashMap<String, String>?): ChatSdkAccessTokenData {
                                 return getAccessTokenDataFromClient()
                             }
 
-                            override fun getBusinessContext(): BusinessContext {
+                            override fun getBusinessContext(payloadArgs: HashMap<String, String>?): BusinessContext {
                                 return BusinessContext(
                                     channelHandle = channelHandle,
                                     ticketGroupingId = ticketGroupingId,
@@ -112,7 +112,7 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
                                 )
                             }
 
-                            override suspend fun getRefreshToken(): String {
+                            override suspend fun getRefreshToken(payloadArgs: HashMap<String, String>?): String {
                                 return getAccessTokenDataFromClient().accessToken ?: ""
                             }
 
