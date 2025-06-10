@@ -11,14 +11,14 @@ import NuggetSDK
 
 final class NuggetFluterThemeProviderImp: NuggetThemeProviderDelegate {
     var defaultLightModeAccentHexColor: String
-    var defaultDarktModeAccentHexColor: String
+    var defaultDarkModeAccentHexColor: String
     var deviceInterfaceStyle: UIUserInterfaceStyle
     
     init(defaultLightModeAccentHexColor: String,
          defaultDarkModeAccentHexColor: String,
          deviceInterfaceStyle: UIUserInterfaceStyle) {
         self.defaultLightModeAccentHexColor = defaultLightModeAccentHexColor
-        self.defaultDarktModeAccentHexColor = defaultDarkModeAccentHexColor
+        self.defaultDarkModeAccentHexColor = defaultDarkModeAccentHexColor
         self.deviceInterfaceStyle = deviceInterfaceStyle
     }
     
@@ -36,11 +36,11 @@ final class NuggetFluterThemeProviderImp: NuggetThemeProviderDelegate {
                 deviceInterfaceStyle = .light
             }
             self.defaultLightModeAccentHexColor = defaultLightModeAccentHexColor
-            self.defaultDarktModeAccentHexColor = defaultDarkModeAccentHexColor
+            self.defaultDarkModeAccentHexColor = defaultDarkModeAccentHexColor
             self.deviceInterfaceStyle = deviceInterfaceStyle
         } else {
             self.defaultLightModeAccentHexColor = "#6B46C1"
-            self.defaultDarktModeAccentHexColor = "#6B46C1"
+            self.defaultDarkModeAccentHexColor = "#6B46C1"
             self.deviceInterfaceStyle = .unspecified
         }
     }

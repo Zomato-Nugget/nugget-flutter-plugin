@@ -9,7 +9,7 @@ import Foundation
 import Flutter
 import NuggetSDK
 
-final class NuggetSDKConfigurationImplementation: NuggetSDkConfigurationDelegate {
+final class NuggetSDKConfigurationImplementation: NuggetSDKConfigurationDelegate {
     
     private let channel: FlutterMethodChannel
     
@@ -28,4 +28,6 @@ final class NuggetSDKConfigurationImplementation: NuggetSDkConfigurationDelegate
             }
         }
     }
+    
+    func chatScreenClosedCallback() {}
 }

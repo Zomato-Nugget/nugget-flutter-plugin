@@ -12,14 +12,14 @@ class FontProviderImpl: NuggetFontProviderDelegate {
 
 class ThemeProviderImpl: NuggetThemeProviderDelegate {
     var defaultLightModeAccentHexColor: String
-    var defaultDarktModeAccentHexColor: String
+    var defaultDarkModeAccentHexColor: String
     var deviceInterfaceStyle: UIUserInterfaceStyle
     
     init(defaultLightModeAccentHexColor: String,
-         defaultDarktModeAccentHexColor: String,
+         defaultDarkModeAccentHexColor: String,
          deviceInterfaceStyle: UIUserInterfaceStyle) {
         self.defaultLightModeAccentHexColor = defaultLightModeAccentHexColor
-        self.defaultDarktModeAccentHexColor = defaultDarktModeAccentHexColor
+        self.defaultDarkModeAccentHexColor = defaultDarkModeAccentHexColor
         self.deviceInterfaceStyle = deviceInterfaceStyle
     }
 }
@@ -28,7 +28,7 @@ public class NuggetFlutterPlugin: NSObject, FlutterPlugin {
     
     private var nuggetAuthProvider: NuggetAuthProviderDelegate?
     private var notificationDelegate: NuggetPushNotificationsListener?
-    private lazy var sdkConfigurationDelegate: NuggetSDkConfigurationDelegate = NuggetSDKConfigurationImplementation(channel: channel)
+    private lazy var sdkConfigurationDelegate: NuggetSDKConfigurationDelegate = NuggetSDKConfigurationImplementation(channel: channel)
     private var customThemeProviderDelegate: NuggetThemeProviderDelegate?
     private var customFontProviderDelegate: NuggetFontProviderDelegate?
     private var businessContextProviderDelegate: NuggetBusinessContextProviderDelegate?
