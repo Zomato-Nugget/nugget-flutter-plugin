@@ -193,4 +193,12 @@ class MethodChannelNuggetFlutterPlugin extends NuggetFlutterPluginPlatform {
       "notifsEnabled" : notifsEnabled
     });
   }
+
+  @override
+  void sendCurrentDarkThemeStatus(bool isDarkTheme) {
+    methodChannel.invokeMethod("clientDarkThemeStatus" , {
+      "darkThemeEnabled" : isDarkTheme
+    });
+  }
+
 }

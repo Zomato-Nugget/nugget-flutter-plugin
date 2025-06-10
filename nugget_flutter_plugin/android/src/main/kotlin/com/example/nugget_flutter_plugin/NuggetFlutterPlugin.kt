@@ -52,6 +52,8 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
 
     private val pendingRequests = ConcurrentHashMap<String, Continuation<ChatSdkAccessTokenData>>()
 
+    private var isClientDarkThemeEnabled : Boolean = false
+
     companion object {
         const val CHANNEL_NAME = "nugget_flutter_plugin"
         const val METHOD_INITIALIZE = "initialize"
@@ -60,6 +62,7 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
         const val METHOD_SYNC_FCM_TOKEN = "syncFCMToken"
         const val METHOD_FETCH_ACCESS_TOKEN_FROM_CLIENT = "fetchAccessTokenFromClient"
         const val HANDLE_DEEPLINK_INSIDE_APP = "handleDeeplinkInsideApp"
+        const val METHOD_CLIENT_DARK_THEME_STATUS = "clientDarkThemeStatus"
 
         const val TIMEOUT_DURATION = 15000L // milliseconds
     }
@@ -99,11 +102,11 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
                     ChatSdk.initialize(
                         application,
                         initInterface = object : ChatSDKInitCommunicator {
-                            override suspend fun getAccessTokenData(): ChatSdkAccessTokenData {
+                            override suspend fun getAccessTokenData(payloadArgs: HashMap<String, String>?): ChatSdkAccessTokenData {
                                 return getAccessTokenDataFromClient()
                             }
 
-                            override fun getBusinessContext(): BusinessContext {
+                            override fun getBusinessContext(payloadArgs: HashMap<String, String>?): BusinessContext {
                                 return BusinessContext(
                                     channelHandle = channelHandle,
                                     ticketGroupingId = ticketGroupingId,
@@ -112,7 +115,7 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
                                 )
                             }
 
-                            override suspend fun getRefreshToken(): String {
+                            override suspend fun getRefreshToken(payloadArgs: HashMap<String, String>?): String {
                                 return getAccessTokenDataFromClient().accessToken ?: ""
                             }
 
@@ -141,6 +144,10 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
                                         mapOf("deeplink" to url)
                                     )
                                 }
+                            }
+
+                            override fun isDarkModeEnabled(): Boolean {
+                                return isClientDarkThemeEnabled
                             }
 
                         },
@@ -212,6 +219,11 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
                         notificationEnabled = (notifsEnabled == true)
                     )
                 )
+            }
+
+            METHOD_CLIENT_DARK_THEME_STATUS -> {
+                isClientDarkThemeEnabled = call.argument<Boolean>("darkThemeEnabled") ?: false
+                result.success(true)
             }
 
             else -> {
