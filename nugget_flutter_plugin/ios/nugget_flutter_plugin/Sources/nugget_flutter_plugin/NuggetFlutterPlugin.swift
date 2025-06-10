@@ -71,6 +71,8 @@ public class NuggetFlutterPlugin: NSObject, FlutterPlugin {
             handleOpenChatWithCustomDeeplink(call: call, result: result)
         case "syncFCMToken":
             handleSyncFCMToken(call: call, result: result)
+        case "sendCurrentDarkThemeStatus":
+            clientDarkThemeStatus(call: call, result: result)
         case "accessTokenResponse":
             break
         default:
@@ -207,4 +209,9 @@ public class NuggetFlutterPlugin: NSObject, FlutterPlugin {
         self.notificationDelegate?.tokenUpdated(to: token)
         self.notificationDelegate?.permissionStatusUpdated(to: isNotificationsEnabled ? .authorized : .denied)
     }
+
+    private func clientDarkThemeStatus(call: FlutterMethodCall, result: @escaping FlutterResult) { 
+        return
+    }
+
 }
