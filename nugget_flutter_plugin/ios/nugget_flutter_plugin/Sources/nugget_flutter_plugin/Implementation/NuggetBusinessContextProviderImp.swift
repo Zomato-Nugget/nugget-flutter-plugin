@@ -12,6 +12,10 @@ import NuggetSDK
 public class NuggetBusinessContextProviderImp: NuggetBusinessContextProviderDelegate {
     
     struct BusinessContext: NuggetChatBusinessContext {
+        var type: String?
+        
+        var ticketID: Int?
+        
         var channelHandle: String?
         
         var ticketGroupingId: String?
@@ -23,11 +27,15 @@ public class NuggetBusinessContextProviderImp: NuggetBusinessContextProviderDele
         init(channelHandle: String? = nil,
              ticketGroupingId: String? = nil,
              ticketProperties: [String : [String]]? = nil,
-             botProperties: [String : [String]]? = nil) {
+             botProperties: [String : [String]]? = nil,
+             type: String? = nil,
+             ticketID: Int? = 0) {
             self.channelHandle = channelHandle
             self.ticketGroupingId = ticketGroupingId
             self.ticketProperties = ticketProperties
             self.botProperties = botProperties
+            self.ticketID = ticketID
+            self.type = type
         }
     }
     
@@ -38,18 +46,18 @@ public class NuggetBusinessContextProviderImp: NuggetBusinessContextProviderDele
         let ticketGroupingId = businessContext["ticketGroupingId"] as? String
         let ticketProperties: [String: [String]]? = (businessContext["ticketProperties"] as? [String: [String]])
         let botProperties: [String: [String]]? = (businessContext["botProperties"] as? [String: [String]])
+        let type = businessContext["type"] as? String
+        let ticketID = businessContext["ticketID"] as? Int
         
         self.businessContext = BusinessContext(channelHandle: channelHandle,
                                                ticketGroupingId: ticketGroupingId,
                                                ticketProperties: ticketProperties,
-                                               botProperties: botProperties)
+                                               botProperties: botProperties,
+                                               type: type,
+                                               ticketID: ticketID)
     }
     
-    
-    
-    public func chatSupportBusingessContext() -> any NuggetChatBusinessContext {
+    public func chatSupportBusinessContext() -> any NuggetChatBusinessContext {
         businessContext
     }
-    
-    
 }

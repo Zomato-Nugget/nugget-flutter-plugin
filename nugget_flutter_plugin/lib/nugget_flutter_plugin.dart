@@ -58,4 +58,9 @@ class NuggetFlutterPlugin {
     return NuggetFlutterPluginPlatform.instance.sendAccessTokenResponse(accessToken, httpCode, requestId);
   }
 
+  /// Checks the current dark theme status in client app and returns the same to native files
+  void sendCurrentDarkThemeStatus(bool isDarkModeEnabled) {
+    return NuggetFlutterPluginPlatform.instance.sendCurrentDarkThemeStatus(isDarkModeEnabled);
   }
+
+}
