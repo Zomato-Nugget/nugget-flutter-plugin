@@ -185,13 +185,14 @@ public class NuggetFlutterPlugin: NSObject, FlutterPlugin {
                 navigationController.pushViewController(chatViewController, animated: true)
                 result(nil)
             } else {
+                let navVC = UINavigationController(rootViewController: chatViewController)
                 // Present modally if no navigation controller is available
-                chatViewController.modalPresentationStyle = .fullScreen
+                navVC.modalPresentationStyle = .fullScreen
                 
                 // Retain strong reference to chat view controller until presentation is complete
-                currentInstance.presentedChatViewController = chatViewController
+                currentInstance.presentedChatViewController = navVC
                 
-                topmostViewController.present(chatViewController, animated: true) { [weak currentInstance] in
+                topmostViewController.present(navVC, animated: true) { [weak currentInstance] in
                     // Clear reference after presentation
                     currentInstance?.presentedChatViewController = nil
                     result(nil)
