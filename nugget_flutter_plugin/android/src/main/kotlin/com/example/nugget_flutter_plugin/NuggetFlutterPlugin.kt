@@ -36,6 +36,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.TimeoutCancellationException
 import android.os.Bundle
+import com.zomato.ui.atomiclib.data.ColorData
 
 /**
  * Created by Kunal Chhabra on 18 May 2025
@@ -98,12 +99,19 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
                 val ticketProperties = businessContext?.get("ticketProperties") as? HashMap<String , ArrayList<String>>
                 val botProperties = businessContext?.get("botProperties") as? HashMap<String , ArrayList<String>>
 
+                val themeData = call.argument<String>("themeData") as? Map<*, *>
+                val accentColorLightMode = themeData?.get("defaultLightModeAccentHexColor") as? String
+                val accentColorDarkMode = themeData?.get("defaultDarkModeAccentHexColor") as? String
+
                 try {
+
+                    if(isInitialized) return
+
                     ChatSdk.initialize(
                         application,
                         initInterface = object : ChatSDKInitCommunicator {
                             override suspend fun getAccessTokenData(payloadArgs: HashMap<String, String>?): ChatSdkAccessTokenData {
-                                return getAccessTokenDataFromClient()
+                                return getAccessTokenDataFromClient(payloadArgs)
                             }
 
                             override fun getBusinessContext(payloadArgs: HashMap<String, String>?): BusinessContext {
@@ -116,7 +124,7 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
                             }
 
                             override suspend fun getRefreshToken(payloadArgs: HashMap<String, String>?): String {
-                                return getAccessTokenDataFromClient().accessToken ?: ""
+                                return getAccessTokenDataFromClient(payloadArgs).accessToken ?: ""
                             }
 
                             override fun getTextAppearance(fontWeight: Int): Int? {
@@ -152,9 +160,13 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
 
                         },
                         initConfig = ChatSdkInitConfig(
-                            namespace =  call.argument<String>("namespace") ?: "",
-                            handleDeeplinkInApp = call.argument<Boolean?>("handleDeeplinkInsideApp") ?: false
-                        ))
+                            namespace = call.argument<String>("namespace") ?: "",
+                            handleDeeplinkInApp = call.argument<Boolean?>("handleDeeplinkInsideApp")
+                                ?: false,
+                            lightModeAccentColorData = ColorData(hex = accentColorLightMode),
+                            darkModeAccentColorData = ColorData(hex = accentColorDarkMode)
+                        )
+                    )
 
                     isInitialized = true
                     result.success(true)
@@ -232,7 +244,7 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
         }
     }
 
-    private suspend fun getAccessTokenDataFromClient(): ChatSdkAccessTokenData {
+    private suspend fun getAccessTokenDataFromClient(payloadArgs: HashMap<String, String>?): ChatSdkAccessTokenData {
         return try {
             withTimeout(TIMEOUT_DURATION) {
                 suspendCancellableCoroutine { continuation ->
@@ -251,7 +263,10 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
                     Handler(Looper.getMainLooper()).post {
                         channel.invokeMethod(
                             METHOD_FETCH_ACCESS_TOKEN_FROM_CLIENT,
-                            mapOf("requestId" to requestId)
+                            mapOf(
+                                "requestId" to requestId,
+                                "payload" to payloadArgs
+                            )
                         )
                     }
                 }

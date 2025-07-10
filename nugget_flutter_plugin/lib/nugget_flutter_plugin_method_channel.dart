@@ -4,6 +4,7 @@ import 'package:nugget_flutter_plugin/models/nugget_business_context.dart';
 import 'package:nugget_flutter_plugin/models/nugget_font_data.dart';
 import 'package:nugget_flutter_plugin/models/nugget_theme_data.dart';
 import 'dart:async';
+import 'dart:collection';
 
 import 'interface/nugget_auth_provider_delegate.dart';
 import 'nugget_flutter_plugin_platform_interface.dart';
@@ -63,7 +64,12 @@ class MethodChannelNuggetFlutterPlugin extends NuggetFlutterPluginPlatform {
       case 'requireAuthInfo' || 'fetchAccessTokenFromClient':
         try {
           final args = call.arguments;
-          final requestId = (args is Map<dynamic, dynamic>) ? args['requestId'] as String? ?? "-1" : "-1";
+          final requestId = (args is Map<dynamic, dynamic>)
+              ? args['requestId'] as String? ?? "-1"
+              : "-1";
+          final payloadArgs = (args is Map && args['payload'] is Map)
+              ? HashMap<String, String>.from(args['payload'] as Map)
+              : HashMap<String, String>();
 
           if (_authProviderDelegate == null) {
             throw PlatformException(
@@ -72,7 +78,8 @@ class MethodChannelNuggetFlutterPlugin extends NuggetFlutterPluginPlatform {
             );
           }
 
-          final authInfo = await _authProviderDelegate!.requireAuthInfo(requestId);
+          final authInfo = await _authProviderDelegate!.requireAuthInfo(
+              requestId, payloadArgs);
           if (authInfo == null) {
             throw PlatformException(
               code: 'AUTH_ERROR',
@@ -91,7 +98,12 @@ class MethodChannelNuggetFlutterPlugin extends NuggetFlutterPluginPlatform {
       case 'refreshAuthInfo':
         try {
           final args = call.arguments;
-          final String requestId = (args is Map) ? args['requestId'] as String? ?? "-1" : "-1";
+          final String requestId = (args is Map)
+              ? args['requestId'] as String? ?? "-1"
+              : "-1";
+          final payloadArgs = (args is Map && args['payload'] is Map)
+              ? HashMap<String, String>.from(args['payload'] as Map)
+              : HashMap<String, String>();
 
           if (_authProviderDelegate == null) {
             throw PlatformException(
@@ -100,7 +112,8 @@ class MethodChannelNuggetFlutterPlugin extends NuggetFlutterPluginPlatform {
             );
           }
 
-          final authInfo = await _authProviderDelegate!.refreshAuthInfo(requestId);
+          final authInfo = await _authProviderDelegate!.refreshAuthInfo(
+              requestId, payloadArgs);
           if (authInfo == null) {
             throw PlatformException(
               code: 'REFRESH_ERROR',
