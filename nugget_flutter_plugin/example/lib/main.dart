@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,10 +19,13 @@ final class DummyTokenProvider implements NuggetAuthProviderDelegate {
   final String accessToken = "";
   final int httpStatusCode = 200;
   String requestId = "-1";
+  HashMap<String, String>? payload = HashMap();
 
   @override
-  Future<NuggetAuthInfo?> requireAuthInfo(String requestId) async {
+  Future<NuggetAuthInfo?> requireAuthInfo(String requestId, HashMap<String,String>? payload) async {
     this.requestId = requestId;
+    this.payload = payload;
+
     fetchAccessTokenFromClient();
     return NuggetAuthInfoImp(
         accessToken: '',
@@ -30,8 +34,9 @@ final class DummyTokenProvider implements NuggetAuthProviderDelegate {
   }
 
   @override
-  Future<NuggetAuthInfo?> refreshAuthInfo(String requestId) async {
+  Future<NuggetAuthInfo?> refreshAuthInfo(String requestId, HashMap<String,String>? payload) async {
     this.requestId = requestId;
+    this.payload = payload;
     fetchAccessTokenFromClient();
     return NuggetAuthInfoImp(
         accessToken: '',
@@ -40,6 +45,7 @@ final class DummyTokenProvider implements NuggetAuthProviderDelegate {
   }
 
   // Method to handle fetchAccessTokenFromClient
+  // Always pass payload to backend as a good practice.
   @override
   Future<String?> fetchAccessTokenFromClient() async {
     _plugin.sendAccessTokenResponse(accessToken, httpStatusCode, requestId);
@@ -116,6 +122,9 @@ void main() async {
   // If theme is refreshed from dark to light or vice versa by a button toggle (or any other client implementation) , again call this method to update plugin.
   _plugin.sendCurrentDarkThemeStatus(false);
 
+  // Always call initialize on every new bot/screen opened
+  // Call openChatWithCustomDeeplink() only after initialisation is done.
+  // If possible, add a delay of 1.5-2 seconds between both operations so that libs are initialised properly.
   _plugin.initialize(namespace,
       null,
       await getFontConfiguration(),
