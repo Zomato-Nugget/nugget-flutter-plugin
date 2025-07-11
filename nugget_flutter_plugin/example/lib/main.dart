@@ -126,7 +126,7 @@ void main() async {
   // Call openChatWithCustomDeeplink() only after initialisation is done.
   // If possible, add a delay of 1.5-2 seconds between both operations so that libs are initialised properly.
   _plugin.initialize(namespace,
-      null,
+      getBusinessContext(),
       await getFontConfiguration(),
       getThemeConfiguration(),
       false); // pass true/false depending on whether you want to handle deeplink inside app or system handles it.
