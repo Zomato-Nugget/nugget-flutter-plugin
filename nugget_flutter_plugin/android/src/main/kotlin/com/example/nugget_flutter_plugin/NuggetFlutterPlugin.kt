@@ -55,6 +55,11 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
 
     private var isClientDarkThemeEnabled : Boolean = false
 
+    private var channelHandle : String? = null
+    private var ticketGroupingId : String? = null
+    private var ticketProperties : HashMap<String , ArrayList<String>>? = null
+    private var botProperties : HashMap<String , ArrayList<String>>? = null
+
     companion object {
         const val CHANNEL_NAME = "nugget_flutter_plugin"
         const val METHOD_INITIALIZE = "initialize"
@@ -94,10 +99,10 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
 
                 val businessContext = call.argument<String>("businessContext") as? Map<* , *>
 
-                val channelHandle = businessContext?.get("channelHandle") as? String
-                val ticketGroupingId = businessContext?.get("ticketGroupingId") as? String
-                val ticketProperties = businessContext?.get("ticketProperties") as? HashMap<String , ArrayList<String>>
-                val botProperties = businessContext?.get("botProperties") as? HashMap<String , ArrayList<String>>
+                channelHandle = businessContext?.get("channelHandle") as? String
+                ticketGroupingId = businessContext?.get("ticketGroupingId") as? String
+                ticketProperties = businessContext?.get("ticketProperties") as? HashMap<String , ArrayList<String>>
+                botProperties = businessContext?.get("botProperties") as? HashMap<String , ArrayList<String>>
 
                 val themeData = call.argument<String>("themeData") as? Map<*, *>
                 val accentColorLightMode = themeData?.get("defaultLightModeAccentHexColor") as? String
