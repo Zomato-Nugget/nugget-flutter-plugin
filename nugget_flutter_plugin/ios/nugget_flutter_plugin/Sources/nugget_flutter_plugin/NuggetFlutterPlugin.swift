@@ -2,28 +2,6 @@ import Flutter
 import UIKit
 import NuggetSDK
 
-class FontProviderImpl: NuggetFontProviderDelegate {
-    var customFontMapping: (any NuggetFontPropertiesMapping)?
-    
-    init(customFontMapping: (any NuggetFontPropertiesMapping)? = nil) {
-        self.customFontMapping = customFontMapping
-    }
-}
-
-class ThemeProviderImpl: NuggetThemeProviderDelegate {
-    var defaultLightModeAccentHexColor: String
-    var defaultDarkModeAccentHexColor: String
-    var deviceInterfaceStyle: UIUserInterfaceStyle
-    
-    init(defaultLightModeAccentHexColor: String,
-         defaultDarkModeAccentHexColor: String,
-         deviceInterfaceStyle: UIUserInterfaceStyle) {
-        self.defaultLightModeAccentHexColor = defaultLightModeAccentHexColor
-        self.defaultDarkModeAccentHexColor = defaultDarkModeAccentHexColor
-        self.deviceInterfaceStyle = deviceInterfaceStyle
-    }
-}
-
 public class NuggetFlutterPlugin: NSObject, FlutterPlugin {
     
     private var nuggetAuthProvider: NuggetAuthProviderDelegate?

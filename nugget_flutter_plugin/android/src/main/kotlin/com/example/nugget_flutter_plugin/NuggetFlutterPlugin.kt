@@ -108,6 +108,10 @@ class NuggetFlutterPlugin : FlutterPlugin, MethodCallHandler , ActivityAware {
                 val accentColorLightMode = themeData?.get("defaultLightModeAccentHexColor") as? String
                 val accentColorDarkMode = themeData?.get("defaultDarkModeAccentHexColor") as? String
 
+                val themeData = call.argument<String>("themeData") as? Map<*, *>
+                val accentColorLightMode = themeData?.get("defaultLightModeAccentHexColor") as? String
+                val accentColorDarkMode = themeData?.get("defaultDarkModeAccentHexColor") as? String
+
                 try {
 
                     if(isInitialized) return
