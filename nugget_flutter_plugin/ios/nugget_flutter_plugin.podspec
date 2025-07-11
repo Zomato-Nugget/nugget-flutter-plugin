@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC
 Plugin to integrate Nugget SDK in Flutter.
                        DESC
-  s.homepage         = 'https://github.com/Zomato-Nuggest/nugget-sdk-ios'
+  s.homepage         = 'https://github.com/Zomato-Nugget/nugget-sdk-ios'
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Zomato' => 'rajesh.budhiraja@zomato.com' }
   s.source           = { :path => '.' }
