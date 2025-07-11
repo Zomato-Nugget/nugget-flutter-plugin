@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'nugget_flutter_plugin'
-  s.version          = '0.0.1'
+  s.version          = '4.0.5'
   s.summary          = 'Nugget SDK Flutter Plugin'
   s.description      = <<-DESC
 Plugin to integrate Nugget SDK in Flutter.
