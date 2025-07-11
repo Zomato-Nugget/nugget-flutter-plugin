@@ -122,6 +122,9 @@ void main() async {
   // If theme is refreshed from dark to light or vice versa by a button toggle (or any other client implementation) , again call this method to update plugin.
   _plugin.sendCurrentDarkThemeStatus(false);
 
+  // Always call initialize on every new bot/screen opened
+  // Call openChatWithCustomDeeplink() only after initialisation is done.
+  // If possible, add a delay of 1.5-2 seconds between both operations so that libs are initialised properly.
   _plugin.initialize(namespace,
       null,
       await getFontConfiguration(),
